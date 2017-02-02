@@ -1,0 +1,14 @@
+Utilisation de la structure "List" du C++ pour les domaines.
+Raisons : Acces aux valeurs en O(n), copie en O(n)
+
+Utilisation de la structure "vector" pour le noeud
+Raions : Acces aux valeurs en O(1)
+
+Utilisation de la structure "Pile" du C++ pour la liste L des noeuds.
+Raisons : Ajout et suppression toujours en tete
+
+Non representations des variables Xi en tant que telles.
+
+domaine : liste ordonnée d'entiers
+noeud : liste de domaine
+pile de noeud
