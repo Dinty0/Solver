@@ -1,0 +1,133 @@
+void backtrack_rec (/* C,*/ vector< list<int> > &node, vector<int> affected)
+{
+	long unsigned int ind;
+
+	cout << "Affected :" << endl;
+	for(unsigned int l=0; l<affected.size(); ++l)
+	{
+		cout << affected.at(l);
+	}
+	cout << endl;
+	
+	if (is_consistant(affected))
+	{
+		
+		ind = affected.size();
+		cout << "is_consistant, size =  " << ind << endl;
+		if (ind == 4) 
+		{
+			// solutions.push_back(affected);
+			// cout << "nbsol" << solutions.size() << endl;
+		}
+		else
+		{
+			for (int i=1; i<=QUEEN_NUMBERS; ++i)
+			{
+				cout << "i : " << i << endl;
+
+				if (i != 1)
+				{
+					affected.pop_back();
+				}
+
+				affected.push_back(i);
+				backtrack_rec(node,affected);	
+			}
+		}
+	}
+	else
+	{
+		cout << "## not consistant" << endl;
+	}
+}
+
+//######################################################################
+
+bool is_consistant(vector< list<int> > node)
+{
+	int cpt = 0;
+	bool res = true;
+
+	//all different
+	for (list<int> i : node)
+	{
+		cpt = 0;
+		for (list<int> j : node)
+		{
+			for (list<int>::iterator it=i.begin(); it!=i.end(); ++it)
+			{
+				for (list<int>::iterator it2=j.begin(); it2!=j.end(); ++it2)
+				{
+					if (*it == *it2)
+					{
+						++cpt;
+					}
+				}
+			}
+		}
+
+		if (cpt > 1)
+			res = false; 
+	}
+
+	// for(unsigned int ind = 0; ind<node.size(); ++ind)
+	// {
+	// 	for (unsigned int ind2 = ind+1; ind2<node.size(); ++ind2)
+	// 	{
+
+	// 		for (list<int>::iterator it=node.at(ind).begin(); it!=node.at(ind).end(); ++it)
+	// 		{
+	// 			for (list<int>::iterator it2=node.at(ind2).begin(); it2!=node.at(ind2).end(); ++it2)
+	// 			{
+	// 				// int resval = abs( vec.at(ind) - vec.at(ind2) );
+	// 				// int resind = ind2 - ind;
+
+	// 				if(resval == resind)
+	// 				{
+	// 					res = false;
+	// 				}
+	// 	}
+	// }
+
+	return res;
+}
+
+//############ IS_CONSISTANT POUR VECTEUR ###########
+
+bool is_consistant(vector<int> vec)
+{
+	int cpt = 0;
+	bool res = true;
+
+	//all different
+	for (int i : vec)
+	{
+		cpt = 0;
+		for (int j : vec)
+		{
+			if (i == j)
+				++cpt;
+		}
+
+		if (cpt > 1)
+			res = false; 
+	}
+
+	for(unsigned int ind = 0; ind<vec.size(); ++ind)
+	{
+		for (unsigned int ind2 = ind+1; ind2<vec.size(); ++ind2)
+		{
+			int resval = abs(vec.at(ind) - vec.at(ind2));
+			int resind = ind2 - ind;
+
+			if(resval == resind)
+			{
+				res = false;
+			}
+		}
+	}
+
+	return res;
+}
+
+

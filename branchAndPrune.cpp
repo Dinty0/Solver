@@ -2,10 +2,13 @@
 #include <list>
 #include <stack>
 #include <vector>
+#include <cmath>
+
+//#include "queensConstraints.cpp"
 
 using namespace std;
 
-#define QUEEN_NUMBERS 4
+#define QUEENS_NUMBER 10 // 5,6,...,12
 
 void printDomain(list<int> domain)
 {
@@ -32,7 +35,7 @@ bool isSolution(vector<list<int> > node)
 {
 	bool res = true;
 
-	for (int i=0; i<QUEEN_NUMBERS; ++i)
+	for (int i=0; i<QUEENS_NUMBER; ++i)
 	{
 		if (node.at(i).size() != 1)
 		{
@@ -53,7 +56,7 @@ int smallestDomain(vector<list<int> > node)
 	while (!found && minsize)
 	{
 
-		while (cpt < QUEEN_NUMBERS && !found)
+		while (cpt < QUEENS_NUMBER && !found)
 		{
 			if (node.at(cpt).size() == minsize)
 			{
@@ -71,66 +74,70 @@ int smallestDomain(vector<list<int> > node)
 	return ind;
 }
 
-vector<list<int> > prune(/* C,*/ vector< list<int> > node)
+bool constraintsQueen(vector< pair <int,int> >  indval)
 {
-	// alldifferent()
-	int value,ind;
-	vector<int> indDomainSize1;
-	//unsigned int cpt = 0;
+	bool res = true; 
 
-	for (int i=0; i<QUEEN_NUMBERS; ++i)
+	for (unsigned int i=0; i<indval.size(); ++i)
 	{
-		if (node.at(i).size()==1)
+		for (unsigned int j=i+1; j<indval.size(); ++j)
 		{
-			indDomainSize1.push_back(i);
-		}
-	}
-
-
-	if (indDomainSize1.size() != 0)
-	{
-		for(unsigned int j=0; j<indDomainSize1.size(); ++j)
-		{
-			ind = indDomainSize1.at(j);
-			value = node.at(ind).front();
-
-			for (int k=0; k<QUEEN_NUMBERS; ++k)
+			if (indval.at(i).second == indval.at(j).second)
 			{
-				if (k != ind)
-				{	
-					node.at(k).remove(value);
-				}
+				res = false;
+			}
+
+			int resval = abs(indval.at(i).second - indval.at(j).second);
+			int resind = indval.at(j).first - indval.at(i).first;
+
+			if (resval == resind)
+			{
+				res = false;
 			}
 		}
 	}
 
-	// diagonals
+	return res;
+}
 
-	// for (int l=0; l<QUEEN_NUMBERS; ++l)
-	// {
-	// 	if (node.at(l).size()==1)
-	// 	{
-	// 		indDomainSize1.push_back(l);
-	// 		cout << "ind :" << l << endl;
-	// 	}
-	// }
+vector< list<int> > protoPrune (vector< list<int> > node/*, Constraints* c*/)
+{
+	vector< pair<int,int> > size1; //stocks the domains which size is 1
+
+	for (unsigned int i=0; i <node.size(); ++i)
+	{
+		if (node.at(i).size() == 1)
+		{
+			size1.push_back(make_pair(i,node.at(i).front()));
+		}
+	}
 
 
-
+	if (size1.size() >= 2)
+	{
+		if (/*c->*/constraintsQueen(size1)) //remplacer par verify constraints
+		{
+			return node;
+		}
+		else 
+		{
+			vector< list<int> > emptyList;
+			return emptyList;
+		}
+	}
 
 	return node;
 }
 
-
-void BranchAndPrune( /*C,*/ vector<list<int> > node, vector<vector<list<int> > > solutions)
+void BranchAndPrune(/*Constraints* c,*/ vector<list<int> > node, vector<vector<list<int> > > *solutions)
 {
 	// initialisation de la pile de noeud
 	stack<vector<list<int> > > node_stack;
 	node_stack.push(node);
 
-	vector<list<int> > E;
-	vector<list<int> > F;
-	vector<list<int> > G;
+	vector< list<int> > E;
+	vector< list<int> > F;
+	vector< list<int> > G;
 
 	list<int> sd;
 
@@ -138,63 +145,83 @@ void BranchAndPrune( /*C,*/ vector<list<int> > node, vector<vector<list<int> > >
 	while(!node_stack.empty())
 	{
 		E = node_stack.top();
-		F = prune(E/*,C*/);
+		node_stack.pop();
+		F = protoPrune(E/*,c*/);
 
 		if (!F.empty())
 		{
 			if (isSolution(F))
 			{
-				solutions.push_back(F);
+				solutions->push_back(F);
 			}
 			else
 			{
 				int indsd = smallestDomain(F);
 				sd = F.at(indsd);
+
 				for (int v : sd)
 				{
 					G = F;
 					list<int> domain_split;
 					domain_split.push_back(v);
 					G.at(indsd) = domain_split;
+
 					node_stack.push(G);
 				}
 			}
 		}
 	}
-	
-
 }
 
 int main()
 {
 	// initialisation des domaines
 
-	list<int> d1; //{0,1,...QUEEN_NUMBERS-1} Domaine de la variable 1
-	list<int> d2; //{0,1,...QUEEN_NUMBERS-1} Domaine de la variable 2
-	list<int> d3; //{0,1,...QUEEN_NUMBERS-1} Domaine de la variable 3
-	list<int> d4; //{0,1,...QUEEN_NUMBERS-1} Domaine de la variable 4
+	list<int> d1; //{0,1,...QUEENS_NUMBER-1} Domaine de la variable 1
+	list<int> d2; //{0,1,...QUEENS_NUMBER-1} Domaine de la variable 2
+	list<int> d3; //{0,1,...QUEENS_NUMBER-1} Domaine de la variable 3
+	list<int> d4; //{0,1,...QUEENS_NUMBER-1} Domaine de la variable 4
+	list<int> d5;
+	list<int> d6;
+	list<int> d7;
+	list<int> d8;
+	list<int> d9;
+	list<int> d10;
+	// list<int> d11;
+	// list<int> d12;
 
 	list<int> sd;
 
-	for (int i=QUEEN_NUMBERS; i>0; --i)
+	for (int i=QUEENS_NUMBER; i>0; --i)
 	{
 		d1.push_front(i);
-		//d2.push_front(i);
+		d2.push_front(i);
 		d3.push_front(i);
-		//d4.push_front(i);
-		
+		d4.push_front(i);
+		d5.push_front(i);
+		d6.push_front(i);
+		d7.push_front(i);
+		d8.push_front(i);
+		d9.push_front(i);
+		d10.push_front(i);
+		// d11.push_front(i);
+		// d12.push_front(i);
 	}
 
-	d4.push_front(1);
-	d2.push_front(2);
-
-
+	cout << endl;
 	cout << "Display of domains : " << endl;
 	printDomain(d1);
 	printDomain(d2);
 	printDomain(d3);
 	printDomain(d4);
-
+	printDomain(d5);
+	printDomain(d6);
+	printDomain(d7);
+	printDomain(d8);
+	printDomain(d9);
+	printDomain(d10);
+	// printDomain(d11);
+	// printDomain(d12);
 
 	// initialisation du noeud initial 
 	vector<list<int> > node;
@@ -203,26 +230,44 @@ int main()
 	node.push_back(d2);
 	node.push_back(d3);
 	node.push_back(d4);
+	node.push_back(d5);
+	node.push_back(d6);
+	node.push_back(d7);	
+	node.push_back(d8);
+	node.push_back(d9);
+	node.push_back(d10);
+	// node.push_back(d11);
+	// node.push_back(d12);
 
 	sd = node.at(smallestDomain(node));
+
+	// Test d'implémentation du pattern strategy (a venir)
+	// cout << "Construction of contraints : " << endl;
+	// Constraints* c = new queensConstraints();
 
 	cout << endl;
 	cout << "Display of the smallest domain (of indice :" << smallestDomain(node) << ") : " << endl;
 	printDomain(sd);
 
-
-	node = prune(node);
 	cout << endl;
-	cout << "Display of node after prune application : " << endl;
+	cout << "Test of BranchAndPrune with protoPrune : " << endl;
 
-	for (int j=0; j<QUEEN_NUMBERS; ++j)
+	vector< vector< list<int> > > solutions;
+	BranchAndPrune(/*c,*/node,&solutions);
+
+	if (solutions.size() > 0)
 	{
-		printDomain(node.at(j));
+		cout << "There are " << solutions.size() << " solutions." << endl;
+
+		for (unsigned int j=0; j<solutions.size(); ++j)
+		{
+			cout << "    Solution " << j << " : " << endl;
+			for(unsigned int k=0; k<solutions.at(j).size(); ++k)
+			{
+				printDomain(solutions.at(j).at(k));
+			}
+		}
 	}
 
-	//BranchAndPrune(C,node,solutions);
-
 	return 0;
-
-
 }
