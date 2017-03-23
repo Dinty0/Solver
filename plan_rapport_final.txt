@@ -1,0 +1,40 @@
+
+I) Utilisation du Solveur
+
+
+	Choisir dans le code en dur : la taille ou le nb reine, etc...
+	Lancer
+	Choisir algo de pruning (1,2, ou 3)
+	Executer
+	Appuyer sur une touche puis entrée, pour voir la prochaine solution
+					q puis entrée, pour quitter les solutions
+
+II) Choix de structures
+
+	cf 1er rapport, reformaliser
+
+III) Différents algorithmes
+
+	1) Simple backtracking
+
+		Expliquer rapidement
+
+	2) Look Ahead
+
+		Expliquer rapidement
+
+	3) Arc consistency based pruning
+
+		Expliquer rapidement
+
+	4) Comparatif des temps sur les 2 pb
+
+		Relever temps faire un comparatif (graphique ?)
+
+IV) Améliorations possibles (Conclusion ?)
+
+	Possibilité de préciser a l'execution le nombre de reines, ou la taille, etc..
+	+ de Généricité, pattern Strategy
+	Optimisation des algorithmes
+	Ajout de problèmes
+	Ajout d'algorithmes de pruning
